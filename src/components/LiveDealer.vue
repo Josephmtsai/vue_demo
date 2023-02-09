@@ -96,16 +96,12 @@ function movePosition(event: any) {
 @keyframes clickEffect {
   0% {
     opacity: 1;
-    width: 1em;
-    height: 1em;
-    margin-top: 25px;
-    margin-left: 25px;
+    transform: scale(0.8);
     border-width: 0.5em;
   }
   100% {
     opacity: 0.2;
-    width: 5em;
-    height: 5em;
+    transform: scale(2);
     border-width: 0.03em;
   }
 }
