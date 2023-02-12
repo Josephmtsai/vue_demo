@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-screen flex justify-center items-center flex-wrap"
+    class="w-screen flex justify-center items-center flex-wrap z-10"
     v-on:click="movePosition($event)"
   >
     <div
@@ -12,48 +12,82 @@
         <div
           id="bp_bet"
           class="flex-grow w-1/3 flex justify-center items-center text-white gap-2 bg-green-800 hover:bg-green-400"
-          v-on:click="placeBet('#bp_bet')"
+          v-on:click="placeBet($event, '#bp_bet')"
         >
           BP
+
+          <Bets
+            v-for="index in 5"
+            :key="index"
+            class="z-[-1]"
+            :id="'bp_chip' + index"
+          ></Bets>
         </div>
         <div
           id="t_bet"
           class="flex-grow w-1/3 flex justify-center items-center text-white gap-2 bg-green-800 hover:bg-green-400"
-          v-on:click="placeBet('#t_bet')"
+          v-on:click="placeBet($event, '#t_bet')"
         >
           T
+          <Bets
+            v-for="index in 5"
+            :key="index"
+            class="z-[-1]"
+            :id="'t_chip' + index"
+          ></Bets>
         </div>
         <div
           id="pp_bet"
           class="flex-grow w-1/3 flex justify-center items-center text-white gap-2 bg-green-800 hover:bg-green-400"
-          v-on:click="placeBet('#pp_bet')"
+          v-on:click="placeBet($event, '#pp_bet')"
         >
           PP
+          <Bets
+            v-for="index in 5"
+            :key="index"
+            class="z-[-1]"
+            :id="'pp_chip' + index"
+          ></Bets>
         </div>
       </div>
       <div
         class="flex font-bold w-[960px] min-w-[480px] h-[80px] flex-row justify-center shadow-lg shadow-green-900 bg-yellow-800 gap-[2px] first:mt-0 mt-[2px]"
-        v-on:click="placeBet('#b_bet')"
       >
         <div
           id="b_bet"
           class="flex-grow w-1/2 flex justify-center items-center text-white gap-2 bg-green-800 hover:bg-green-400"
+          v-on:click="placeBet($event, '#b_bet')"
         >
           B
+          <Bets
+            v-for="index in 5"
+            :key="index"
+            class="z-[-1]"
+            :id="'b_chip' + index"
+          ></Bets>
         </div>
         <div
           id="p_bet"
           class="flex-grow w-1/2 flex justify-center items-center text-white gap-2 bg-green-800 hover:bg-green-400"
-          v-on:click="placeBet('#p_bet')"
+          v-on:click="placeBet($event, '#p_bet')"
         >
           P
+          <Bets
+            v-for="index in 5"
+            :key="index"
+            class="z-[-1]"
+            :id="'p_chip' + index"
+          ></Bets>
         </div>
       </div>
     </div>
 
+    <!--hidden bets-->
+    <div class="mt-[240px] w-full flex justify-center items-center">
+      <div ref="chip" class="w-[80px] h-[80px]">&nbsp;</div>
+    </div>
     <div
-      ref="mybets"
-      class="mt-[250px] w-full flex justify-center items-center cursor-pointer"
+      class="mt-[50px] w-full flex justify-center items-center cursor-pointer"
     >
       <div
         class="flex w-[960px] h-[100px] flex-row shadow-lg shadow-green-900 font-bold bg-green-800"
@@ -93,26 +127,18 @@
   </div>
 
   <div
-    class="w-[50px] h-[50px] absolute clickCircle"
+    class="w-[50px] h-[50px] absolute clickCircle z-[-1]"
     v-bind:style="{ top: yPosition, left: xPosition }"
   ></div>
+
   <!--Static Bets-->
   <div v-for="bet in betsSetting">
     <div v-if="bet.display">
       <Teleport :to="bet.id" :disabled="!bet.display">
-        <Bets></Bets>
+        <Bets class="absolute t-[300px] l-[300px]"></Bets>
       </Teleport>
     </div>
   </div>
-  <!--Transition animation--->
-  <Transition
-    v-on:before-enter="onBeforeEnter"
-    v-on:enter="enter"
-    v-on:after-enter="onAfterEnter"
-    :css="false"
-  >
-    <Bets v-show="moveEvent"></Bets>
-  </Transition>
 </template>
 <script setup lang="ts">
 import gsap from 'gsap';
@@ -131,48 +157,54 @@ const betsSetting: Ref<BetsInterface[]> = ref([
   { display: false, id: '#t_bet' },
   { display: false, id: '#b_bet' },
 ]);
-const mybets: Ref<any> = ref(null);
-const moveEvent: Ref<boolean> = ref(false);
+const betsItem: Ref<number> = ref(5);
+const chip: Ref<any> = ref(null);
 const xPosition: Ref<string> = ref('0px');
 const yPosition: Ref<string> = ref('0px');
-function movePosition(event: any) {
+async function movePosition(event: any) {
   xPosition.value = (event.pageX - 25).toString() + 'px';
   yPosition.value = (event.pageY - 25).toString() + 'px';
-  moveEvent.value = true;
+  console.log('trigger');
 }
-function placeBet(id: string) {
+function placeBet(event: any, id: string) {
   betsSetting.value.forEach((setting) => {
     if (setting.id === id) setting.display = true;
   });
-}
-
-function onBeforeEnter(el: any) {
-  debugger;
-  gsap.set(el, {
-    x: 800,
-    y: 800,
-    opacity: 0,
-  });
-}
-
-function enter(el: any, done: any) {
-  gsap.to(el, {
-    duration: 1,
-    opacity: 1,
-    x: 400,
-    y: 400,
-    onComplete: done,
-  });
-}
-
-// called when the enter transition has finished.
-function onAfterEnter(el: any) {
-  gsap.to(el, {
-    opacity: 0,
-    x: 100,
-    y: 100,
-  });
-  moveEvent.value = false;
+  console.log(event.target.getBoundingClientRect());
+  console.log(chip.value.getBoundingClientRect());
+  const yValue =
+    chip.value.getBoundingClientRect().y -
+    event.target.getBoundingClientRect().y -
+    event.target.getBoundingClientRect().height / 2 +
+    chip.value.getBoundingClientRect().height / 2;
+  const xValue =
+    chip.value.getBoundingClientRect().x -
+    event.target.getBoundingClientRect().x -
+    event.target.getBoundingClientRect().width / 2 +
+    chip.value.getBoundingClientRect().width / 2;
+  let delay = 0;
+  for (let i = 1; i <= betsItem.value; i++) {
+    gsap.fromTo(
+      id.replace('_bet', '_chip') + i.toString(),
+      {
+        duration: 0.1,
+        delay: delay,
+        opacity: 1,
+        x: xValue,
+        y: yValue,
+        zIndex: 100,
+      },
+      {
+        duration: 0.1,
+        delay: delay,
+        opacity: 1,
+        x: 0,
+        y: 0,
+        zIndex: 0,
+      }
+    );
+    delay = delay + 0.05;
+  }
 }
 </script>
 
@@ -183,8 +215,8 @@ function onAfterEnter(el: any) {
   border-color: black;
   background-color: transparent;
   border-radius: 50%;
+  z-index: 100;
   animation: clickEffect 0.4s ease-out;
-  z-index: 99999;
 }
 
 @keyframes clickEffect {
@@ -198,20 +230,5 @@ function onAfterEnter(el: any) {
     transform: scale(2);
     border-width: 0.03em;
   }
-}
-
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 1s linear;
-  opacity: 1;
-}
-.fade-enter-to,
-.fade-leave {
-  opacity: 1;
 }
 </style>
