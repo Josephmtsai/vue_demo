@@ -1,3 +1,31 @@
+# Demo Project
+
+![Demo](./Demo%20Testing.gif)
+
+### Pre Require
+
+Tailwind css
+GSAP3
+
+install
+
+```
+yarn
+```
+
+```
+yarn dev
+```
+
+### Function
+
+1. 排版 flex
+2. 殘影 animation
+3. Click animation
+4. hover function
+
+### Design 想法
+
 # Vue 3 + TypeScript + Vite
 
 This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
