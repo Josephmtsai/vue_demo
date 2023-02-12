@@ -1,7 +1,7 @@
 <template>
   <div
-    class="w-screen flex justify-center items-center flex-wrap z-10"
-    v-on:click="movePosition($event)"
+    class="w-screen flex justify-center items-center flex-wrap z-1"
+    v-on:click="triggerCircle($event, false)"
   >
     <div
       class="mt-[100px] w-[960px] min-w-[480px] flex justify-center flex-wrap items-center cursor-pointer p-[2px] bg-yellow-800"
@@ -12,12 +12,12 @@
         <div
           id="bp_bet"
           class="flex-grow w-1/3 flex justify-center items-center text-white gap-2 bg-green-800 hover:bg-green-400"
-          v-on:click="placeBet($event, '#bp_bet')"
+          v-on:click.stop="placeBet($event, '#bp_bet')"
         >
           BP
 
           <Bets
-            v-for="index in 5"
+            v-for="index in betsItem"
             :key="index"
             class="z-[-1]"
             :id="'bp_chip' + index"
@@ -26,11 +26,11 @@
         <div
           id="t_bet"
           class="flex-grow w-1/3 flex justify-center items-center text-white gap-2 bg-green-800 hover:bg-green-400"
-          v-on:click="placeBet($event, '#t_bet')"
+          v-on:click.stop="placeBet($event, '#t_bet')"
         >
           T
           <Bets
-            v-for="index in 5"
+            v-for="index in betsItem"
             :key="index"
             class="z-[-1]"
             :id="'t_chip' + index"
@@ -39,11 +39,11 @@
         <div
           id="pp_bet"
           class="flex-grow w-1/3 flex justify-center items-center text-white gap-2 bg-green-800 hover:bg-green-400"
-          v-on:click="placeBet($event, '#pp_bet')"
+          v-on:click.stop="placeBet($event, '#pp_bet')"
         >
           PP
           <Bets
-            v-for="index in 5"
+            v-for="index in betsItem"
             :key="index"
             class="z-[-1]"
             :id="'pp_chip' + index"
@@ -56,11 +56,11 @@
         <div
           id="b_bet"
           class="flex-grow w-1/2 flex justify-center items-center text-white gap-2 bg-green-800 hover:bg-green-400"
-          v-on:click="placeBet($event, '#b_bet')"
+          v-on:click.stop="placeBet($event, '#b_bet')"
         >
           B
           <Bets
-            v-for="index in 5"
+            v-for="index in betsItem"
             :key="index"
             class="z-[-1]"
             :id="'b_chip' + index"
@@ -69,11 +69,11 @@
         <div
           id="p_bet"
           class="flex-grow w-1/2 flex justify-center items-center text-white gap-2 bg-green-800 hover:bg-green-400"
-          v-on:click="placeBet($event, '#p_bet')"
+          v-on:click.stop="placeBet($event, '#p_bet')"
         >
           P
           <Bets
-            v-for="index in 5"
+            v-for="index in betsItem"
             :key="index"
             class="z-[-1]"
             :id="'p_chip' + index"
@@ -127,10 +127,15 @@
   </div>
 
   <div
-    class="w-[50px] h-[50px] absolute clickCircle z-[-1]"
+    class="w-[50px] h-[50px] absolute clickCircle z-20"
+    v-if="!isBetCircle"
     v-bind:style="{ top: yPosition, left: xPosition }"
   ></div>
-
+  <div
+    class="w-[50px] h-[50px] absolute clickBetCircle z-20"
+    v-if="isBetCircle"
+    v-bind:style="{ top: yPosition, left: xPosition }"
+  ></div>
   <!--Static Bets-->
   <div v-for="bet in betsSetting">
     <div v-if="bet.display">
@@ -157,16 +162,21 @@ const betsSetting: Ref<BetsInterface[]> = ref([
   { display: false, id: '#t_bet' },
   { display: false, id: '#b_bet' },
 ]);
-const betsItem: Ref<number> = ref(5);
+const betsItem: Ref<number> = ref(8);
 const chip: Ref<any> = ref(null);
 const xPosition: Ref<string> = ref('0px');
 const yPosition: Ref<string> = ref('0px');
-async function movePosition(event: any) {
+const isBetCircle: Ref<boolean> = ref(false);
+function triggerCircle(event: any, isInBetCircle: boolean) {
   xPosition.value = (event.pageX - 25).toString() + 'px';
   yPosition.value = (event.pageY - 25).toString() + 'px';
+  isBetCircle.value = isInBetCircle;
   console.log('trigger');
 }
 function placeBet(event: any, id: string) {
+  xPosition.value = (event.pageX - 25).toString() + 'px';
+  yPosition.value = (event.pageY - 25).toString() + 'px';
+  triggerCircle(event, true);
   betsSetting.value.forEach((setting) => {
     if (setting.id === id) setting.display = true;
   });
@@ -228,6 +238,29 @@ function placeBet(event: any, id: string) {
   100% {
     opacity: 0.2;
     transform: scale(2);
+    border-width: 0.03em;
+  }
+}
+
+.clickBetCircle:active {
+  box-sizing: border-box;
+  border-style: solid;
+  border-color: yellow;
+  background-color: transparent;
+  border-radius: 50%;
+  z-index: 100;
+  animation: clickBetEffect 0.4s ease-out;
+}
+
+@keyframes clickBetEffect {
+  0% {
+    opacity: 1;
+    transform: scale(0.8);
+    border-width: 0.5em;
+  }
+  100% {
+    opacity: 0.2;
+    transform: scale(4);
     border-width: 0.03em;
   }
 }
