@@ -135,6 +135,7 @@
     class="w-[50px] h-[50px] absolute clickBetCircle z-20"
     v-if="isBetCircle"
     v-bind:style="{ top: yPosition, left: xPosition }"
+    v-on:click="placeBet()"
   ></div>
   <!--Static Bets-->
   <div v-for="bet in betsSetting">
@@ -167,41 +168,48 @@ const chip: Ref<any> = ref(null);
 const xPosition: Ref<string> = ref('0px');
 const yPosition: Ref<string> = ref('0px');
 const isBetCircle: Ref<boolean> = ref(false);
+const currentElementId: Ref<string> = ref('');
+const currentX: Ref<number> = ref(0);
+const currentY: Ref<number> = ref(0);
 function triggerCircle(event: any, isInBetCircle: boolean) {
   xPosition.value = (event.pageX - 25).toString() + 'px';
   yPosition.value = (event.pageY - 25).toString() + 'px';
   isBetCircle.value = isInBetCircle;
   console.log('trigger');
 }
-function placeBet(event: any, id: string) {
-  xPosition.value = (event.pageX - 25).toString() + 'px';
-  yPosition.value = (event.pageY - 25).toString() + 'px';
-  triggerCircle(event, true);
-  betsSetting.value.forEach((setting) => {
-    if (setting.id === id) setting.display = true;
-  });
-  console.log(event.target.getBoundingClientRect());
-  console.log(chip.value.getBoundingClientRect());
-  const yValue =
-    chip.value.getBoundingClientRect().y -
-    event.target.getBoundingClientRect().y -
-    event.target.getBoundingClientRect().height / 2 +
-    chip.value.getBoundingClientRect().height / 2;
-  const xValue =
-    chip.value.getBoundingClientRect().x -
-    event.target.getBoundingClientRect().x -
-    event.target.getBoundingClientRect().width / 2 +
-    chip.value.getBoundingClientRect().width / 2;
+function placeBet(event?: any, id?: string) {
+  console.log(event);
+  if (id) currentElementId.value = id.replace('_bet', '_chip');
+  if (event) {
+    xPosition.value = (event.pageX - 25).toString() + 'px';
+    yPosition.value = (event.pageY - 25).toString() + 'px';
+    triggerCircle(event, true);
+    betsSetting.value.forEach((setting) => {
+      if (setting.id === id) setting.display = true;
+    });
+    console.log(event.target.getBoundingClientRect());
+    console.log(chip.value.getBoundingClientRect());
+    currentY.value =
+      chip.value.getBoundingClientRect().y -
+      event.target.getBoundingClientRect().y -
+      event.target.getBoundingClientRect().height / 2 +
+      chip.value.getBoundingClientRect().height / 2;
+    currentX.value =
+      chip.value.getBoundingClientRect().x -
+      event.target.getBoundingClientRect().x -
+      event.target.getBoundingClientRect().width / 2 +
+      chip.value.getBoundingClientRect().width / 2;
+  }
   let delay = 0;
   for (let i = 1; i <= betsItem.value; i++) {
     gsap.fromTo(
-      id.replace('_bet', '_chip') + i.toString(),
+      currentElementId.value + i.toString(),
       {
         duration: 0.1,
         delay: delay,
         opacity: 1,
-        x: xValue,
-        y: yValue,
+        x: currentX.value,
+        y: currentY.value,
         zIndex: 100,
       },
       {
