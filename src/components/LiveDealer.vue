@@ -1,13 +1,18 @@
 <template>
+  <h1
+    class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-4xl dark:text-white"
+  >
+    Click P will have mutiple place bet
+  </h1>
   <div
     class="w-screen flex justify-center items-center flex-wrap z-1"
     v-on:click="triggerCircle($event, false)"
   >
     <div
-      class="mt-[100px] w-[960px] min-w-[480px] flex justify-center flex-wrap items-center cursor-pointer p-[2px] bg-yellow-800"
+      class="mt-[100px] w-[960px] min-w-[360px] flex justify-center flex-wrap items-center cursor-pointer p-[2px] bg-yellow-800"
     >
       <div
-        class="flex font-bold w-[960px] min-w-[480px] h-[80px] flex-row justify-center shadow-lg shadow-green-900 bg-yellow-800 gap-[2px] first:mt-0 mt-[2px]"
+        class="flex font-bold w-[960px] min-w-[360px] h-[80px] flex-row justify-center shadow-lg shadow-green-900 bg-yellow-800 gap-[2px] first:mt-0 mt-[2px]"
       >
         <div
           id="bp_bet"
@@ -51,7 +56,7 @@
         </div>
       </div>
       <div
-        class="flex font-bold w-[960px] min-w-[480px] h-[80px] flex-row justify-center shadow-lg shadow-green-900 bg-yellow-800 gap-[2px] first:mt-0 mt-[2px]"
+        class="flex font-bold w-[960px] min-w-[360px] h-[80px] flex-row justify-center shadow-lg shadow-green-900 bg-yellow-800 gap-[2px] first:mt-0 mt-[2px]"
       >
         <div
           id="b_bet"
@@ -73,7 +78,7 @@
         >
           P
           <Bets
-            v-for="index in betsItem"
+            v-for="index in 8"
             :key="index"
             class="z-[-1]"
             :id="'p_chip' + index"
@@ -90,35 +95,35 @@
       class="mt-[50px] w-full flex justify-center items-center cursor-pointer"
     >
       <div
-        class="flex w-[960px] h-[100px] flex-row shadow-lg shadow-green-900 font-bold bg-green-800"
+        class="flex w-[960px] min-w-[360px] h-[100px] flex-row shadow-lg shadow-green-900 font-bold bg-green-800 overflow-hidden"
       >
         <div
-          class="rounded-full border-2 h-[80px] border-white text-white w-[80px] p-5 flex justify-center items-center ml-3 hover:bg-green-400"
+          class="rounded-full border-2 h-[80px] border-white text-white w-[80px] min-w-[40px] min-h-[40px] p-5 flex justify-center items-center ml-3 hover:bg-green-400"
         >
           10
         </div>
         <div
-          class="rounded-full border-2 h-[80px] border-white text-white w-[80px] p-5 flex justify-center items-center ml-3 hover:bg-green-400"
+          class="rounded-full border-2 h-[80px] border-white text-white w-[80px] min-w-[40px] min-h-[40px] p-5 flex justify-center items-center ml-3 hover:bg-green-400"
         >
           10
         </div>
         <div
-          class="rounded-full border-2 h-[80px] border-white text-white w-[80px] p-5 flex justify-center items-center ml-3 hover:bg-green-400"
+          class="rounded-full border-2 h-[80px] border-white text-white w-[80px] min-w-[40px] min-h-[40px] p-5 flex justify-center items-center ml-3 hover:bg-green-400"
         >
           20
         </div>
         <div
-          class="rounded-full border-2 h-[80px] border-white text-white w-[80px] p-5 flex justify-center items-center ml-3 hover:bg-green-400"
+          class="rounded-full border-2 h-[80px] border-white text-white w-[80px] min-w-[40px] min-h-[40px] p-5 flex justify-center items-center ml-3 hover:bg-green-400"
         >
           30
         </div>
         <div
-          class="rounded-full border-2 h-[80px] border-white text-white w-[80px] p-5 flex justify-center items-center ml-3 hover:bg-green-400"
+          class="rounded-full border-2 h-[80px] border-white text-white w-[80px] min-w-[40px] min-h-[40px] p-5 flex justify-center items-center ml-3 hover:bg-green-400"
         >
           40
         </div>
         <div
-          class="rounded-full border-2 h-[80px] border-white text-white w-[80px] p-5 flex justify-center items-center ml-3 hover:bg-green-400"
+          class="rounded-full border-2 h-[80px] border-white text-white w-[80px] min-w-[40px] min-h-[40px] p-5 flex justify-center items-center ml-3 hover:bg-green-400"
         >
           50
         </div>
@@ -163,7 +168,7 @@ const betsSetting: Ref<BetsInterface[]> = ref([
   { display: false, id: '#t_bet' },
   { display: false, id: '#b_bet' },
 ]);
-const betsItem: Ref<number> = ref(8);
+const betsItem: Ref<number> = ref(1);
 const chip: Ref<any> = ref(null);
 const xPosition: Ref<string> = ref('0px');
 const yPosition: Ref<string> = ref('0px');
@@ -178,8 +183,8 @@ function triggerCircle(event: any, isInBetCircle: boolean) {
   console.log('trigger');
 }
 function placeBet(event?: any, id?: string) {
-  console.log(event);
   if (id) currentElementId.value = id.replace('_bet', '_chip');
+  const betsCount = currentElementId.value !== '#p_chip' ? betsItem.value : 8; //only p bet have 8 placebet
   if (event) {
     xPosition.value = (event.pageX - 25).toString() + 'px';
     yPosition.value = (event.pageY - 25).toString() + 'px';
@@ -187,8 +192,7 @@ function placeBet(event?: any, id?: string) {
     betsSetting.value.forEach((setting) => {
       if (setting.id === id) setting.display = true;
     });
-    console.log(event.target.getBoundingClientRect());
-    console.log(chip.value.getBoundingClientRect());
+
     currentY.value =
       chip.value.getBoundingClientRect().y -
       event.target.getBoundingClientRect().y -
@@ -201,7 +205,7 @@ function placeBet(event?: any, id?: string) {
       chip.value.getBoundingClientRect().width / 2;
   }
   let delay = 0;
-  for (let i = 1; i <= betsItem.value; i++) {
+  for (let i = 1; i <= betsCount; i++) {
     gsap.fromTo(
       currentElementId.value + i.toString(),
       {
