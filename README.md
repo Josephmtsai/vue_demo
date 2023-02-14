@@ -47,7 +47,7 @@ first: mt-0 mt-[2px];
 p-[2px]
 ```
 
-2. 殘影 animation
+2. 殘影 animation (Click P Bet)
 
 > 這個功能最難 主要是使用 GSAP 的 FromTo 功能 先設定 結束 以及 初始位置 讓他倒回撥放 跟錄影帶一樣
 > 並且事先 先定義多個元件 使用 delay 製造殘影. 當觸發 click 去計算 要從哪邊位移 以及是移動到哪一個元件
@@ -85,7 +85,11 @@ currentX.value =
 
 > 最主要是透過點擊的 event 的物件 算出雙方位置 再傳入給 Gsap 執行就可以
 
-3. Click animation
+3. Place Bet animation
+
+作法只需要把 2 的 element 改成數量 1 即可
+
+4. Click animation
    > 在 bet table 裡面點選是黃色框
    > 在外圍是黑色框 以及比較小的位移
 
@@ -106,7 +110,7 @@ currentX.value =
 > 作法 當點擊畫面 移動 element 位置 並且視情況 觸發 bubble event
 > 這裡的 placeBet() 用於觸發殘影 . 如果沒有傳遞值進去 視為位置沒有改變 使用之前點選的 bet 去觸發殘影
 
-4. Bets
+5. Bets
 
 ![Demo](./02.png)
 
